@@ -1,0 +1,166 @@
+﻿<Window x:Class="MCSLauncher.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:controls="clr-namespace:MCSLauncher"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:local="clr-namespace:MCSLauncher"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        Title="Tekkit Server Launcher"
+        Width="525"
+        Height="350"
+        Background="LightGray"
+        DataContext="{Binding Source={StaticResource Main}}"
+        mc:Ignorable="d">
+    <Grid>
+        <TabControl TabStripPlacement="Left">
+            <TabItem>
+                <TabItem.Header>
+                    <Image Height="32"
+                           Source="Resources\Terminal.png"
+                           Stretch="Uniform" />
+                </TabItem.Header>
+
+                <Grid Margin="5">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <local:AutoScrollTextBox AutoScroll="True"
+                                             Focusable="False"
+                                             IsReadOnly="True"
+                                             ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                                             ScrollViewer.VerticalScrollBarVisibility="Visible"
+                                             Text="{Binding ProcessManager.Output,
+                                                            Mode=OneWay,
+                                                            FallbackValue='Program running in design mode. This is test output.'}" />
+
+                    <StackPanel Grid.Row="1" Orientation="Horizontal">
+                        <Button Width="100"
+                                Height="30"
+                                Margin="0,5,2.5,0"
+                                Command="{Binding StartProcess}"
+                                Content="Start Server" />
+                        <Button Width="100"
+                                Height="30"
+                                Margin="2.5,5,5,0"
+                                Command="{Binding StopProcess}"
+                                Content="Stop Server" />
+                    </StackPanel>
+                </Grid>
+
+            </TabItem>
+            <TabItem>
+                <TabItem.Header>
+                    <Image Width="32"
+                           Height="32"
+                           Source="Resources/Globe.png"
+                           Stretch="Uniform" />
+                </TabItem.Header>
+
+                <StackPanel Grid.Row="1" Margin="5">
+
+                    <TextBlock TextWrapping="WrapWithOverflow">
+                        The Remote Control Server feature allows you to remotely start and stop the Tekkit server via a TCP connection on port 2025.
+                        The supported messages are 'start' to remotely start the server, and 'stop' to stop it.
+                        <LineBreak />
+                        <LineBreak />
+                        Note: This feature is experimental and as such provides no security. Anyone with access to port 2025 on this machine can start/stop your server.
+                        Unless you are using an SSH tunnel or the port is blocked by your router/firewall, it's recommended that you keep this off.
+                    </TextBlock>
+
+                    <StackPanel Margin="0,5,0,0"
+                                VerticalAlignment="Top"
+                                Orientation="Horizontal">
+
+                        <Button Width="100"
+                                Height="30"
+                                Margin="0,5,2.5,0"
+                                Command="{Binding StartNetworkListener}"
+                                Content="Start Server" />
+                        <Button Width="100"
+                                Height="30"
+                                Margin="2.5,5,5,0"
+                                Command="{Binding StopNetworkListener}"
+                                Content="Stop Server" />
+                    </StackPanel>
+                </StackPanel>
+            </TabItem>
+            <TabItem>
+                <TabItem.Header>
+                    <Image Height="32"
+                           Source="Resources\Gear.png"
+                           Stretch="Uniform" />
+                </TabItem.Header>
+                <Grid Margin="5">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock VerticalAlignment="Center" Text="Path to Minecraft server: " />
+
+                    <TextBox Grid.Row="0"
+                             Grid.Column="1"
+                             Margin="5"
+                             VerticalAlignment="Center"
+                             IsReadOnly="True"
+                             Text="{Binding ProcessManager.ServerPath.AbsolutePath,
+                                            Mode=OneWay}" />
+                    <Image Grid.Row="0"
+                           Grid.Column="2"
+                           Width="16"
+                           Height="16"
+                           Margin="2.5,2.5,5,2.5"
+                           VerticalAlignment="Center"
+                           Source="Resources/dialog-error.ico"
+                           Stretch="Uniform"
+                           ToolTip="The selected folder does not contain a file called Tekkit.jar. Please ensure you've selected a valid Tekkit server folder.">
+                        <Image.Style>
+                            <Style TargetType="Image">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsPathValid}" Value="True">
+                                        <Setter Property="Visibility" Value="Collapsed" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Image.Style>
+                    </Image>
+
+                    <Button Grid.Row="0"
+                            Grid.Column="3"
+                            Width="80"
+                            Height="25"
+                            Margin="5,0,0,0"
+                            Command="{Binding BrowsePath}"
+                            Content="Browse..." />
+
+                    <TextBlock Grid.Row="1"
+                               Grid.Column="0"
+                               VerticalAlignment="Center"
+                               Text="Shutdown timeout (minutes):" />
+                    <TextBox Name="Timeout"
+                             Grid.Row="1"
+                             Grid.Column="1"
+                             Width="45"
+                             Margin="5,5,5,2"
+                             HorizontalAlignment="Left"
+                             VerticalAlignment="Center"
+                             MaxLength="4"
+                             Text="{Binding ProcessManager.ShutdownTimeout,
+                                            UpdateSourceTrigger=PropertyChanged,
+                                            Mode=TwoWay,
+                                            FallbackValue=15}"
+                             TextChanged="Timeout_TextChanged" />
+                </Grid>
+            </TabItem>
+        </TabControl>
+    </Grid>
+</Window>
